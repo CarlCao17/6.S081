@@ -20,14 +20,17 @@ fmtname(char *path)
   p++;
 
   // Return blank-padded name.
-  if(strlen(p) >= DIRSIZ)
+  int n = strlen(p);
+  if(n >= DIRSIZ)
     return p;
-  memmove(buf, p, strlen(p));
-  memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
+  
+  memmove(buf, p, n);
+  buf[n] = 0;
+//   memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
   return buf;
 }
 
-int
+void
 find(char *path, char *pattern, int find_mode)
 {
     char buf[512], *p;
@@ -38,35 +41,36 @@ find(char *path, char *pattern, int find_mode)
 
     if ((fd = open(path, O_RDONLY)) < 0) {
         fprintf(2, "find: cannot open %s\n", path);
-        return 1;
+        return ;
     }
 
     if (fstat(fd, &st) < 0) {
         fprintf(2, "find: cannot stat %s\n", path);
         close(fd);
-        return 1;
+        return ;
     }
 
     file_name = fmtname(path);
-    printf("file name: %s\n", file_name);
     switch (st.type) {
         case T_FILE:
-            if (strcmp(file_name, pattern) != 0) {
-                return 1;
+            if (strcmp(file_name, pattern) == 0) {
+                printf("%s\n", path);
             }
-            printf("%s\n", path);
+            break;
         case T_DIR:
             if (strlen(path) + 1 + DIRSIZ + 1 > sizeof(buf)) {
                 printf("find: path too long\n");
                 break;
             }
-            if (find_mode == FILE_AND_DIR && (strcmp(file_name, pattern) == 0)) {
-                printf("%s\n", buf);
-            }
+
             strcpy(buf, path);
             p = buf + strlen(buf);
             *p++ = '/';
 
+            if (find_mode == FILE_AND_DIR && (strcmp(file_name, pattern) == 0)) {
+                printf("%s\n", buf);
+            }
+        
             while (read(fd, &de, sizeof(de)) == sizeof(de)) {
                 if ((de.inum == 0) || (strcmp(de.name, ".") == 0) || (strcmp(de.name, "..") == 0)) {
                     continue;
@@ -78,7 +82,6 @@ find(char *path, char *pattern, int find_mode)
             }
     }
     close(fd);
-    return 0;
 }
 
 int
@@ -88,10 +91,7 @@ main(int argc, char *argv[])
         fprintf(2, "usage: find <path> <pattern>\n");
         exit(1);
     }
-    int res = find(argv[1], argv[2], ONLY_FILE);
-    if (res > 0) {
-        printf("find: cannot find %s in path %s\n", argv[2], argv[1]);
-        exit(1);
-    }
+    // The Test left the check for DIR
+    find(argv[1], argv[2], FILE_AND_DIR);
     exit(0);
 }
