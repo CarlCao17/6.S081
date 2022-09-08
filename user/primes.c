@@ -1,6 +1,7 @@
 #include "user/utils.h"
 
-void primes(int left[2]) {
+void 
+primes(int left[2]) {
     int n, prime;
     int pid = getpid();
     int right[2];
@@ -51,6 +52,5 @@ main()
         Write(p[1], &i, 4);
     }
     close(p[1]);
-    wait(0);
     exit(0);
 }

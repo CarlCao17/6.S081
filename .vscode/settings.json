@@ -4,7 +4,9 @@
     "cstdio": "cpp",
     "type_traits": "cpp",
     "typeinfo": "cpp",
-    "types.h": "c"
+    "types.h": "c",
+    "utils.h": "c",
+    "param.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "/usr/bin/gcc",
   "C_Cpp_Runner.cppCompilerPath": "/usr/bin/g++",

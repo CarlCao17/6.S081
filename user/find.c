@@ -3,6 +3,7 @@
 #include "kernel/fcntl.h"
 #include "kernel/fs.h"
 #include "user/user.h"
+#include "user/utils.h"
 
 #define ONLY_FILE 0
 #define FILE_AND_DIR 1
@@ -71,7 +72,7 @@ find(char *path, char *pattern, int find_mode)
                 printf("%s\n", buf);
             }
         
-            while (read(fd, &de, sizeof(de)) == sizeof(de)) {
+            while (Read(fd, &de, sizeof(de)) == sizeof(de)) {
                 if ((de.inum == 0) || (strcmp(de.name, ".") == 0) || (strcmp(de.name, "..") == 0)) {
                     continue;
                 }
