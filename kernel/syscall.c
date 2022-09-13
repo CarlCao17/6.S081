@@ -155,6 +155,7 @@ char *syscall_names[] = {
   "write",
   "mknod",
   "unlink",
+  "link",
   "mkdir",
   "close",
   "trace",
@@ -172,7 +173,7 @@ syscall(void)
     p->trapframe->a0 = syscalls[num]();
     if(p->tracemask && (p->tracemask & (1<<num))) {
        printf("%d: syscall %s -> %d\n", 
-            p->pid, syscall_names[num], p->trapframe->a0);
+            p->pid, syscall_names[num], num, p->trapframe->a0);
     }
    } else {
     printf("%d %s: unknown sys call %d\n",
